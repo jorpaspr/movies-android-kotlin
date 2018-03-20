@@ -30,12 +30,7 @@ open class MainModel(private val database: MoviesDatabase, private val client: M
                         }
                     }
                     .flatMap { movie ->
-                        Observable.create<Movie> { emitter ->
-                            getMovieById(movie.imdbId).subscribe {
-                                emitter.onNext(it)
-                            }
-                            emitter.onComplete()
-                        }
+                        getMovieById(movie.imdbId)
                     }
                     .flatMap { movie ->
                         persistMovie(movie).toObservable()
