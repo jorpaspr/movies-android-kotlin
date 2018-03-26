@@ -11,8 +11,8 @@ import io.reactivex.Observable
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mockito.BDDMockito
 import org.mockito.Mock
-import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnit
 
 class MainPresenterTest {
@@ -55,31 +55,31 @@ class MainPresenterTest {
     fun shouldPassUserMoviesToView() {
         // given
         val userMovies = listOf(createUserMovie(), createUserMovie(), createUserMovie())
+        BDDMockito.given(model.loadUserMovies()).willReturn(Flowable.just(userMovies))
+        BDDMockito.given(model.searchMovies()).willReturn(Observable.just(createMovie()))
 
         // when
-        Mockito.`when`(model.loadUserMovies()).thenReturn(Flowable.just(userMovies))
-        Mockito.`when`(model.searchMovies()).thenReturn(Observable.just(createMovie()))
         presenter.onCreate()
 
         // then
-        Mockito.verify(view, Mockito.times(1)).showLoading()
-        Mockito.verify(view, Mockito.times(1)).showUserMovies(userMovies)
-        Mockito.verifyNoMoreInteractions(view)
+        BDDMockito.then(view).should(BDDMockito.times(1)).showLoading()
+        BDDMockito.then(view).should(BDDMockito.times(1)).showUserMovies(userMovies)
+        BDDMockito.then(view).shouldHaveNoMoreInteractions()
     }
 
     @Test
     fun shouldHandleNoUserMovies() {
         // given
         val userMovies = emptyList<UserMovie>()
+        BDDMockito.given(model.loadUserMovies()).willReturn(Flowable.just(userMovies))
+        BDDMockito.given(model.searchMovies()).willReturn(Observable.empty())
 
         // when
-        Mockito.`when`(model.loadUserMovies()).thenReturn(Flowable.just(userMovies))
-        Mockito.`when`(model.searchMovies()).thenReturn(Observable.empty())
         presenter.onCreate()
 
         // then
-        Mockito.verify(view, Mockito.times(1)).showLoading()
-        Mockito.verify(view, Mockito.times(1)).showNoUserMovies()
-        Mockito.verifyNoMoreInteractions(view)
+        BDDMockito.then(view).should(BDDMockito.times(1)).showLoading()
+        BDDMockito.then(view).should(BDDMockito.times(1)).showNoUserMovies()
+        BDDMockito.then(view).shouldHaveNoMoreInteractions()
     }
 }

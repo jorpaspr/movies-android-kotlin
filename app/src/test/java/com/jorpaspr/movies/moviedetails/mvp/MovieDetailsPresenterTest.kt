@@ -7,8 +7,8 @@ import com.jorpaspr.movies.util.RxImmediateSchedulerRule
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mockito.BDDMockito
 import org.mockito.Mock
-import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnit
 
 class MovieDetailsPresenterTest {
@@ -47,29 +47,29 @@ class MovieDetailsPresenterTest {
     fun shouldPassBookmarkedUserMovieToView() {
         // given
         val userMovie = createUserMovie(true)
+        BDDMockito.given(model.userMovie).willReturn(userMovie)
 
         // when
-        Mockito.`when`(model.userMovie).thenReturn(userMovie)
         presenter.onCreate()
 
         // then
-        Mockito.verify(view, Mockito.times(1)).showUserMovie(userMovie)
-        Mockito.verify(view, Mockito.times(1)).showBookmarked(true)
-        Mockito.verifyNoMoreInteractions(view)
+        BDDMockito.then(view).should(BDDMockito.times(1)).showUserMovie(userMovie)
+        BDDMockito.then(view).should(BDDMockito.times(1)).showBookmarked(true)
+        BDDMockito.then(view).shouldHaveNoMoreInteractions()
     }
 
     @Test
     fun shouldPassNotBookmarkedUserMovieToView() {
         // given
         val userMovie = createUserMovie(false)
+        BDDMockito.given(model.userMovie).willReturn(userMovie)
 
         // when
-        Mockito.`when`(model.userMovie).thenReturn(userMovie)
         presenter.onCreate()
 
         // then
-        Mockito.verify(view, Mockito.times(1)).showUserMovie(userMovie)
-        Mockito.verify(view, Mockito.times(1)).showBookmarked(false)
-        Mockito.verifyNoMoreInteractions(view)
+        BDDMockito.then(view).should(BDDMockito.times(1)).showUserMovie(userMovie)
+        BDDMockito.then(view).should(BDDMockito.times(1)).showBookmarked(false)
+        BDDMockito.then(view).shouldHaveNoMoreInteractions()
     }
 }
