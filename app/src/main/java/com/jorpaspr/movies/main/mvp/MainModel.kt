@@ -21,20 +21,9 @@ open class MainModel(private val database: MoviesDatabase, private val client: M
      */
     fun searchMovies(): Observable<Movie> =
             getMoviesListBySearch(SEARCH_KEY, YEAR, TYPE)
-                    .flatMap { movies ->
-                        Observable.create<Movie> { emitter ->
-                            movies.forEach { movie ->
-                                emitter.onNext(movie)
-                            }
-                            emitter.onComplete()
-                        }
-                    }
-                    .flatMap { movie ->
-                        getMovieById(movie.imdbId)
-                    }
-                    .flatMap { movie ->
-                        persistMovie(movie).toObservable()
-                    }
+                    .flatMapIterable { movies -> movies }
+                    .flatMap { movie -> getMovieById(movie.imdbId) }
+                    .flatMap { movie -> persistMovie(movie).toObservable() }
 
     /**
      * Loads movies with bookmark info from cache.
@@ -61,13 +50,13 @@ open class MainModel(private val database: MoviesDatabase, private val client: M
     private fun getMoviesListBySearch(searchKey: String, year: String, type: String): Observable<List<Movie>> =
             client.searchMovies(searchKey, year, type)
                     .map { searchResult -> searchResult.search }
-                    .map({ searches ->
+                    .map { searches ->
                         val movies = mutableListOf<Movie>()
                         for (search in searches) {
                             movies.add(Movie(search.imdbID, search.title, "", "", "", search.poster))
                         }
                         movies
-                    })
+                    }
 
     /**
      * Retrieves complete information of a movie online.

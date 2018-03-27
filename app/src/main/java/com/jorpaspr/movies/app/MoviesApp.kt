@@ -1,36 +1,24 @@
 package com.jorpaspr.movies.app
 
+import android.app.Activity
 import android.app.Application
-import com.jorpaspr.movies.api.ApiModule
-import com.jorpaspr.movies.database.DatabaseModule
-import com.jorpaspr.movies.database.UserMovie
-import com.jorpaspr.movies.main.MainActivity
-import com.jorpaspr.movies.main.MainComponent
-import com.jorpaspr.movies.main.MainModule
-import com.jorpaspr.movies.moviedetails.MovieDetailsActivity
-import com.jorpaspr.movies.moviedetails.MovieDetailsComponent
-import com.jorpaspr.movies.moviedetails.MovieDetailsModule
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.HasActivityInjector
+import javax.inject.Inject
 
-class MoviesApp : Application() {
+class MoviesApp : Application(), HasActivityInjector {
 
-    companion object {
-        private lateinit var appComponent: AppComponent
-
-        @JvmStatic
-        fun createMainComponent(activity: MainActivity): MainComponent =
-                appComponent.plusMainComponent(MainModule(activity))
-
-        @JvmStatic
-        fun createMovieDetailsComponent(activity: MovieDetailsActivity, userMovie: UserMovie): MovieDetailsComponent =
-                appComponent.plusMovieDetailsComponent(MovieDetailsModule(activity, userMovie))
-    }
+    @Inject
+    lateinit var activityInjector: DispatchingAndroidInjector<Activity>
 
     override fun onCreate() {
         super.onCreate()
-
-        appComponent = DaggerAppComponent.builder()
-                .apiModule(ApiModule())
-                .databaseModule(DatabaseModule(this))
+        DaggerAppComponent
+                .builder()
+                .application(this)
                 .build()
+                .inject(this)
     }
+
+    override fun activityInjector(): DispatchingAndroidInjector<Activity> = activityInjector
 }

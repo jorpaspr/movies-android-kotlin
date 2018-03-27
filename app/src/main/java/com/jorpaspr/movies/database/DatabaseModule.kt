@@ -7,11 +7,11 @@ import dagger.Provides
 import javax.inject.Singleton
 
 @Module
-class DatabaseModule(private val context: Context) {
+class DatabaseModule {
 
     @Singleton
     @Provides
-    fun provideMoviesDatabase(): MoviesDatabase =
+    fun provideMoviesDatabase(context: Context): MoviesDatabase =
             Room.databaseBuilder(context, MoviesDatabase::class.java, "movies.db")
                     .build()
 }

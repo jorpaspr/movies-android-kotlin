@@ -1,25 +1,26 @@
 package com.jorpaspr.movies.app
 
+import android.app.Application
 import com.jorpaspr.movies.api.ApiModule
-import com.jorpaspr.movies.api.MoviesClient
-import com.jorpaspr.movies.main.MainComponent
-import com.jorpaspr.movies.main.MainModule
-import com.jorpaspr.movies.moviedetails.MovieDetailsComponent
-import com.jorpaspr.movies.moviedetails.MovieDetailsModule
 import com.jorpaspr.movies.database.DatabaseModule
-import com.jorpaspr.movies.database.MoviesDatabase
+import dagger.BindsInstance
 import dagger.Component
+import dagger.android.AndroidInjectionModule
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [ApiModule::class, DatabaseModule::class])
+@Component(modules = [AndroidInjectionModule::class, ActivityBuilder::class,
+    AppModule::class, ApiModule::class, DatabaseModule::class])
 interface AppComponent {
 
-    fun plusMainComponent(module: MainModule): MainComponent
+    fun inject(app: MoviesApp)
 
-    fun plusMovieDetailsComponent(module: MovieDetailsModule): MovieDetailsComponent
+    @Component.Builder
+    interface Builder {
 
-    fun moviesClient(): MoviesClient
+        @BindsInstance
+        fun application(application: Application): Builder
 
-    fun moviesDatabase(): MoviesDatabase
+        fun build(): AppComponent
+    }
 }

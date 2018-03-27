@@ -9,12 +9,12 @@ import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.jorpaspr.movies.R
-import com.jorpaspr.movies.app.MoviesApp
 import com.jorpaspr.movies.database.UserMovie
 import com.jorpaspr.movies.main.mvp.MainPresenter
 import com.jorpaspr.movies.main.mvp.view.MainView
 import com.jorpaspr.movies.main.mvp.view.MoviesAdapter
 import com.jorpaspr.movies.moviedetails.MovieDetailsActivity
+import dagger.android.AndroidInjection
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), MoviesAdapter.OnMovieClicked, MainView {
@@ -30,6 +30,7 @@ class MainActivity : AppCompatActivity(), MoviesAdapter.OnMovieClicked, MainView
     lateinit var presenter: MainPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -41,8 +42,6 @@ class MainActivity : AppCompatActivity(), MoviesAdapter.OnMovieClicked, MainView
         mMoviesAdapter = MoviesAdapter(this, this)
         mRecyclerView.layoutManager = LinearLayoutManager(this)
         mRecyclerView.adapter = mMoviesAdapter
-
-        MoviesApp.createMainComponent(this).inject(this)
 
         presenter.onCreate()
     }

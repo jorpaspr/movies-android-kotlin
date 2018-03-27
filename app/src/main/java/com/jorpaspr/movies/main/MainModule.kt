@@ -1,6 +1,5 @@
 package com.jorpaspr.movies.main
 
-import android.content.Context
 import com.jorpaspr.movies.api.MoviesClient
 import com.jorpaspr.movies.database.MoviesDatabase
 import com.jorpaspr.movies.main.mvp.MainModel
@@ -10,7 +9,7 @@ import dagger.Module
 import dagger.Provides
 
 @Module
-class MainModule(private val context: Context) {
+class MainModule {
 
     @MainScope
     @Provides
@@ -18,7 +17,7 @@ class MainModule(private val context: Context) {
 
     @MainScope
     @Provides
-    fun provideView() = context as MainView
+    fun provideView(activity: MainActivity) = activity as MainView
 
     @MainScope
     @Provides
